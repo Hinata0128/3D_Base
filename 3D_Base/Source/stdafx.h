@@ -8,6 +8,9 @@
 
 #include <stdio.h>
 #include <tchar.h>
+#include <vector>
+#include <string>
+#include <memory>
 
 // TODO: プログラムに必要な追加ヘッダーをここで参照してください
 #include <Windows.h>

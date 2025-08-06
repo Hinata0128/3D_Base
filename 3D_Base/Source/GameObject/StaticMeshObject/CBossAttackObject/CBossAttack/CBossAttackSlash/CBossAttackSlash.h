@@ -28,11 +28,11 @@ public:
     const D3DXVECTOR3& GetCalculatedAttackPosition() const override { return m_vCurrentAttackPos; }
 
 private:
-    bool m_bIsSlashing;                 //斬撃中かどうかを管理するフラグ
-    float m_fCurrentSlashTime;          //現在の斬撃経過時間 (秒)
-    float m_fSlashDuration;             //斬撃の持続時間 (秒)
-    float m_fZMoveDistance;             //Z軸方向への移動距離 (今回は-2.0f)
-    D3DXVECTOR3 m_vInitialBossPos;      //斬撃開始時のボスの初期位置
-    D3DXVECTOR3 m_vCurrentAttackPos;    //斬撃中のボスの現在位置 (攻撃によって計算される位置)
-    D3DXMATRIX m_mAttackWorld;          //斬撃動作中のボスのワールド行列
+    bool        m_bIsSlashing;              //斬撃中かどうかを管理するフラグ
+    float       m_fCurrentSlashTime;        //現在の斬撃経過時間 (秒)
+    float       m_fSlashDuration;           //斬撃の持続時間 (秒)
+    float       m_fZMoveDistance;           //Z軸方向への移動距離 (今回は-2.0f)
+    D3DXVECTOR3 m_vInitialBossPos;          //斬撃開始時のボスの初期位置
+    D3DXVECTOR3 m_vCurrentAttackPos;        //斬撃中のボスの現在位置 (攻撃によって計算される位置)
+    D3DXMATRIX  m_mAttackWorld;             //斬撃動作中のボスのワールド行列
 };
