@@ -45,7 +45,6 @@ void CBossAttackManager::CreateBossAttack(BossAttackList attackType, const D3DXV
     case BossAttackList::Slash:
         m_pAttack = std::make_unique<CBossAttackSlash>();
         // 斬撃開始メソッドを呼び出し、ボスの現在位置を渡す
-        // dynamic_cast で適切な型に変換してから呼び出す
         if (CBossAttackSlash* slash = dynamic_cast<CBossAttackSlash*>(m_pAttack.get()))
         {
             slash->StartBossSlash(bossCurrentPos);
@@ -55,7 +54,8 @@ void CBossAttackManager::CreateBossAttack(BossAttackList attackType, const D3DXV
             OutputDebugStringA("Error: Failed to cast to CBossAttackSlash in CreateBossAttack.\n");
         }
         break;
-    case BossAttackList::Jump: // ★追加: ジャンプ攻撃の生成ロジック
+
+    case BossAttackList::Jump:
         m_pAttack = std::make_unique<CBossAttackJump>();
         if (CBossAttackJump* jump = dynamic_cast<CBossAttackJump*>(m_pAttack.get()))
         {
@@ -66,6 +66,20 @@ void CBossAttackManager::CreateBossAttack(BossAttackList attackType, const D3DXV
             OutputDebugStringA("Error: Failed to cast to CBossAttackJump in CreateBossAttack.\n");
         }
         break;
+
+        // ★追加: チャージ攻撃の生成ロジック
+    case BossAttackList::Charge:
+        m_pAttack = std::make_unique<CBossAttackSlashCharge>();
+        if (CBossAttackSlashCharge* charge = dynamic_cast<CBossAttackSlashCharge*>(m_pAttack.get()))
+        {
+            charge->StartBossSlashCharge(bossCurrentPos);
+        }
+        else
+        {
+            OutputDebugStringA("Error: Failed to cast to CBossAttackSlashCharge in CreateBossAttack.\n");
+        }
+        break;
+
     case BossAttackList::max:
         // エラーハンドリングまたは何もしない
         break;

@@ -4,7 +4,7 @@ CBossAttackSlash::CBossAttackSlash()
     : m_bIsSlashing(false)
     , m_fCurrentSlashTime(0.0f)
     , m_fSlashDuration(0.5f)       // 斬撃の持続時間を0.5秒に設定 (調整可能)
-    , m_fZMoveDistance(-2.0f)      // Z軸方向に-2だけ進む (調整可能) 現状アニメーションがないため肉眼で確認できるコードにしている
+    , m_fZMoveDistance(-1.0f)      // Z軸方向に-2だけ進む (調整可能) 現状アニメーションがないため肉眼で確認できるコードにしている
     , m_vInitialBossPos(0.0f, 0.0f, 0.0f)
     , m_vCurrentAttackPos(0.0f, 0.0f, 0.0f)
 {

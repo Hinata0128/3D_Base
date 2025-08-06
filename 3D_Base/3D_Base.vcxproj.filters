@@ -125,6 +125,7 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackSlash\CBossAttackSlash.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttackManager\CBossAttackManager.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackJump\CBossAttackJump.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackSlashCharge\CBossAttackSlashCharge.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Global.h">
@@ -168,6 +169,7 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackSlash\CBossAttackSlash.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttackManager\CBossAttackManager.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackJump\CBossAttackJump.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackSlashCharge\CBossAttackSlashCharge.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\Sprite3D.hlsl">

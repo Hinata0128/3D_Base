@@ -55,9 +55,6 @@ void CBossAttackJump::Update()
     //通常は deltaTime = 1.0f / 60.0f; のように実際の経過時間を使うべきです
     //今回はプレイヤーに合わせて 1.0f とします
 
-    m_fCurrentJumpTime += delta_time; //経過時間を更新 (厳密には deltaTime ではなくフレーム数)
-
-
     //重力の影響を受ける
     m_vJumpVelocity.y -= m_Gravity * delta_time; //Y軸速度から重力を引く (Y軸上が正の場合)
 

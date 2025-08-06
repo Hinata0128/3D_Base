@@ -1,24 +1,28 @@
-#pragma once
+﻿#pragma once
 #include <vector>
 #include <memory>
-// CBossAttackObject/CBossAttackObject.h �͒��ڎg�p���Ȃ��Ȃ�폜
+// CBossAttackObject/CBossAttackObject.h は直接使用しないなら削除
 #include "GameObject/StaticMeshObject/CBossAttackObject/CBossAttack/CBossAttack.h"
 #include "GameObject/StaticMeshObject/CBossAttackObject/CBossAttack/CBossAttackSlash/CBossAttackSlash.h"
-// ���ǉ�: Jump Attack�̃w�b�_���C���N���[�h
-#include "GameObject/StaticMeshObject/CBossAttackObject/CBossAttack/CBossAttackJump/CBossAttackJump.h" // �������p�X�ɒ������Ă�������
+// ★追加: Jump Attackのヘッダをインクルード
+#include "GameObject/StaticMeshObject/CBossAttackObject/CBossAttack/CBossAttackJump/CBossAttackJump.h" // 正しいパスに調整してください
+
+// ★追加: CBossAttackSlashChargeのヘッダーをインクルード
+#include "..//CBossAttack/CBossAttackSlashCharge/CBossAttackSlashCharge.h"
 
 /***********************************************************************
-*	�{�X�}�l�[�W���[�N���X.
+*	ボスマネージャークラス.
 **/
 
 class CBossAttackManager
 {
 public:
-	//�񋓌^���쐬(BossList�p)
+	//列挙型を作成(BossList用)
 	enum class BossAttackList
 	{
 		Slash,
-		Jump, // ���ǉ�: �W�����v�U��
+		Jump, // ★追加: ジャンプ攻撃
+		Charge, // ★追加: チャージ攻撃
 		max,
 	};
 
@@ -29,23 +33,23 @@ public:
 	void Update();
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera);
 
-	// �{�X�A�^�b�N�̐����Ɛݒ���s���֐�
+	// ボスアタックの生成と設定を行う関数
 	// Parameters:
-	//    attackType: �U���̎��
-	//    bossCurrentPos: �U���J�n���̃{�X�̌��݂̃��[���h���W
+	//    attackType: 攻撃の種類
+	//    bossCurrentPos: 攻撃開始時のボスの現在のワールド座標
 	void CreateBossAttack(BossAttackList attackType, const D3DXVECTOR3& bossCurrentPos);
 
-	// ���݃A�N�e�B�u�ȃ{�X�A�^�b�N�����݂��邩�ǂ������`�F�b�N����
+	// 現在アクティブなボスアタックが存在するかどうかをチェックする
 	bool HasActiveAttack() const { return m_pAttack != nullptr && m_pAttack->IsAttackActive(); }
 
-	// ���݃A�N�e�B�u�ȃ{�X�A�^�b�N�I�u�W�F�N�g�ւ̃|�C���^���擾�i�ǂݎ���p�j
-	// CBoss�N���X���U���̏�Ԃ�ʒu���擾���邽�߂Ɏg�p
+	// 現在アクティブなボスアタックオブジェクトへのポインタを取得（読み取り専用）
+	// CBossクラスが攻撃の状態や位置を取得するために使用
 	CBossAttack* GetActiveAttack() const { return m_pAttack.get(); }
 
-	// ���݂̃{�X�A�^�b�N�������I�ɏI��������i�K�v�ł���΁j
+	// 現在のボスアタックを強制的に終了させる（必要であれば）
 	void ResetCurrentAttack();
 
 
 private:
-	std::unique_ptr<CBossAttack> m_pAttack; // ���݃A�N�e�B�u�ȃ{�X�A�^�b�N��ێ�
+	std::unique_ptr<CBossAttack> m_pAttack; // 現在アクティブなボスアタックを保持
 };
