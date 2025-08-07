@@ -13,7 +13,7 @@ CBoss::CBoss()
     , deleta_time(0.f)
     , m_fSlashCoolTime(SLASH_COOLTIME_DURATION)
     , m_pPlayer(nullptr)
-    , m_eCurrentAttackSequenceState(AttackSequenceState::Slash) // 初期攻撃を斬る攻撃に設定
+    , m_eCurrentAttackSequenceState(AttackSequenceState::Jump) // 初期攻撃を斬る攻撃に設定
 {
     AttachMesh(*CStaticMeshManager::GetInstance()->GetMeshInstance(CStaticMeshManager::CMeshList::Enemy));
     m_bossAttackManager = std::make_unique<CBossAttackManager>();
@@ -42,6 +42,12 @@ void CBoss::Update()
         {
             switch (m_eCurrentAttackSequenceState)
             {
+            case AttackSequenceState::Jump:
+                m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Jump, GetPosition());
+                m_fSlashCoolTime = 0.f;
+                m_eCurrentAttackSequenceState = AttackSequenceState::Jump; // 次の攻撃を斬る攻撃に設定（最初に戻る）
+                OutputDebugStringA("Boss: Initiating Jump Attack!\n");
+                break;
             case AttackSequenceState::Slash:
                 m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Slash, GetPosition());
                 m_fSlashCoolTime = 0.f;
@@ -56,12 +62,6 @@ void CBoss::Update()
                 OutputDebugStringA("Boss: Initiating Charge Attack!\n");
                 break;
 
-            case AttackSequenceState::Jump:
-                m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Jump, GetPosition());
-                m_fSlashCoolTime = 0.f;
-                m_eCurrentAttackSequenceState = AttackSequenceState::Slash; // 次の攻撃を斬る攻撃に設定（最初に戻る）
-                OutputDebugStringA("Boss: Initiating Jump Attack!\n");
-                break;
 
             default:
                 break;

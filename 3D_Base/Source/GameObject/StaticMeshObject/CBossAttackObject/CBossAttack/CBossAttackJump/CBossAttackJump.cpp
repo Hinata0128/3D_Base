@@ -1,100 +1,199 @@
-#include "CBossAttackJump.h"
-#include <cmath>       //fmaxf ‚ğg‚¤‚½‚ß‚É•K—v
+ï»¿#include "CBossAttackJump.h"
+
+#include <cmath>Â  Â  Â  Â //fmaxf ã‚’ä½¿ã†ãŸã‚ã«å¿…è¦
+
+
 
 CBossAttackJump::CBossAttackJump()
-    : m_bIsJumping(false)
-    , m_fCurrentJumpTime(0.0f)
-    , m_fJumpDuration(0.5f)                 //‚±‚Ìƒ‚ƒfƒ‹‚Å‚Í’¼Úg‚í‚È‚¢‚ªA‰Šú‰»q‚Æ‚µ‚Äc‚·
-    , m_fJumpHeight(5.0f)                   //‚±‚Ìƒ‚ƒfƒ‹‚Å‚Í’¼Úg‚í‚È‚¢‚ªA‰Šú‰»q‚Æ‚µ‚Äc‚·
-    , m_vInitialBossPos(0.0f, 0.0f, 0.0f)
-    , m_vCurrentAttackPos(0.0f, 0.0f, 0.0f)
-    , m_vJumpVelocity(0.0f, 0.0f, 0.0f)     //ƒWƒƒƒ“ƒv‘¬“x‚ğ‰Šú‰»
-    , m_JumpPower(0.42f)                    //ƒvƒŒƒCƒ„[‚ÌƒWƒƒƒ“ƒv—Í‚Æ“¯‚¶‰Šú’l
-    , m_Gravity(0.02f)                      //ƒvƒŒƒCƒ„[‚Ìd—Í‚Æ“¯‚¶‰Šú’l
+
+	: m_bIsJumping(false)
+
+	, m_fCurrentJumpTime(0.0f)
+
+	, m_fJumpDuration(0.5f)//ã“ã®ãƒ¢ãƒ‡ãƒ«ã§ã¯ç›´æ¥ä½¿ã‚ãªã„ãŒã€åˆæœŸåŒ–å­ã¨ã—ã¦æ®‹ã™
+
+	, m_fJumpHeight(5.0f)//ã“ã®ãƒ¢ãƒ‡ãƒ«ã§ã¯ç›´æ¥ä½¿ã‚ãªã„ãŒã€åˆæœŸåŒ–å­ã¨ã—ã¦æ®‹ã™
+
+	, m_vInitialBossPos(0.0f, 0.0f, 0.0f)
+
+	, m_vCurrentAttackPos(0.0f, 0.0f, 0.0f)
+
+	, m_vJumpVelocity(0.0f, 0.0f, 0.0f)//ã‚¸ãƒ£ãƒ³ãƒ—é€Ÿåº¦ã‚’åˆæœŸåŒ–
+
+	, m_JumpPower(0.5f)//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚¸ãƒ£ãƒ³ãƒ—åŠ›ã¨åŒã˜åˆæœŸå€¤
+
+	, m_Gravity(0.02f)//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®é‡åŠ›ã¨åŒã˜åˆæœŸå€¤
+
 {
-    //‚±‚±‚ÉƒGƒtƒFƒNƒg‚ÌÀ‘•ƒR[ƒh‚ğ“ü‚ê‚é.
-    //ƒVƒ“ƒOƒ‹ƒgƒ“‚Åì¬‚µ‚Ä‚¢‚é‚È‚ç‚±‚±‚É–¼‘O‚ğ“ü—Í‚¾‚¯‚Å‚¢‚¢.
+
+	//ã“ã“ã«ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®å®Ÿè£…ã‚³ãƒ¼ãƒ‰ã‚’å…¥ã‚Œã‚‹.
+
+	//ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã§ä½œæˆã—ã¦ã„ã‚‹ãªã‚‰ã“ã“ã«åå‰ã‚’å…¥åŠ›ã ã‘ã§ã„ã„.
+
 }
+
+
 
 CBossAttackJump::~CBossAttackJump()
+
 {
+
 }
+
+
 
 void CBossAttackJump::StartJump(const D3DXVECTOR3& bossCurrentPos)
+
 {
-    //Šù‚ÉƒWƒƒƒ“ƒv’†‚Å‚ ‚ê‚Î‰½‚à‚µ‚È‚¢
-    if (m_bIsJumping)
-    {
-        return;
-    }
 
-    m_bIsJumping        = true;
-    m_fCurrentJumpTime  = 0.0f;           //Œo‰ßŠÔ‚ğƒŠƒZƒbƒg
-    m_vInitialBossPos   = bossCurrentPos; //ƒWƒƒƒ“ƒvŠJn‚Ìƒ{ƒX‚Ìƒ[ƒ‹ƒhˆÊ’u‚ğ•Û‘¶
-    //ƒWƒƒƒ“ƒvŠJn‚ÌY‘¬“x‚ÉƒWƒƒƒ“ƒv—Í‚ğ—^‚¦‚é
-    m_vJumpVelocity.y   = m_JumpPower;
+	//æ—¢ã«ã‚¸ãƒ£ãƒ³ãƒ—ä¸­ã§ã‚ã‚Œã°ä½•ã‚‚ã—ãªã„
 
-    //Œ»İˆÊ’u‚à‰ŠúˆÊ’u‚Å‰Šú‰»
-    m_vCurrentAttackPos = bossCurrentPos;
+	if (m_bIsJumping)
 
-    //CStaticMeshObject‚ÌŠî’êƒNƒ‰ƒX‚ÌˆÊ’u‚àXV
-    SetPosition(m_vInitialBossPos);
+	{
+
+		return;
+
+	}
+
+
+
+	m_bIsJumping = true;
+
+	m_fCurrentJumpTime = 0.0f;//çµŒéæ™‚é–“ã‚’ãƒªã‚»ãƒƒãƒˆ
+
+	m_vInitialBossPos = bossCurrentPos; //ã‚¸ãƒ£ãƒ³ãƒ—é–‹å§‹æ™‚ã®ãƒœã‚¹ã®ãƒ¯ãƒ¼ãƒ«ãƒ‰ä½ç½®ã‚’ä¿å­˜
+
+	//ã‚¸ãƒ£ãƒ³ãƒ—é–‹å§‹æ™‚ã®Yé€Ÿåº¦ã«ã‚¸ãƒ£ãƒ³ãƒ—åŠ›ã‚’ä¸ãˆã‚‹
+
+	m_vJumpVelocity.y = m_JumpPower;
+
+
+
+	//ç¾åœ¨ä½ç½®ã‚‚åˆæœŸä½ç½®ã§åˆæœŸåŒ–
+
+	m_vCurrentAttackPos = bossCurrentPos;
+
+
+
+	//CStaticMeshObjectã®åŸºåº•ã‚¯ãƒ©ã‚¹ã®ä½ç½®ã‚‚æ›´æ–°
+
+	SetPosition(m_vInitialBossPos);
+
 }
+
+
 
 void CBossAttackJump::Update()
+
 {
-    //ƒWƒƒƒ“ƒv’†‚Å‚È‚¯‚ê‚Î‰½‚à‚µ‚È‚¢
-    if (!m_bIsJumping)
-    {
-        return;
-    }
 
-    //ƒfƒ‹ƒ^ƒ^ƒCƒ€‚Ìæ“¾ (ÀÛ‚ÌƒQ[ƒ€ƒ‹[ƒv‚©‚ç³Šm‚È’l‚ğæ“¾‚µ‚Ä‚­‚¾‚³‚¢)
-    //ƒvƒŒƒCƒ„[‚Æ“¯‚¶ŒvZƒƒWƒbƒN‚É‚·‚é‚½‚ßAdelta_time ‚ğg—p
-    float delta_time = 1.0f; // šƒvƒŒƒCƒ„[‚ÌUpdate‚Æ“¯‚¶‚­A‚±‚±‚ÅŒÅ’è’l‚ğg‚¤‚©AÀÛ‚Ìƒfƒ‹ƒ^ƒ^ƒCƒ€‚ğ“n‚·‚©ŒŸ“¢
-    //’Êí‚Í deltaTime = 1.0f / 60.0f; ‚Ì‚æ‚¤‚ÉÀÛ‚ÌŒo‰ßŠÔ‚ğg‚¤‚×‚«‚Å‚·
-    //¡‰ñ‚ÍƒvƒŒƒCƒ„[‚É‡‚í‚¹‚Ä 1.0f ‚Æ‚µ‚Ü‚·
+	//ã‚¸ãƒ£ãƒ³ãƒ—ä¸­ã§ãªã‘ã‚Œã°ä½•ã‚‚ã—ãªã„
 
-    //d—Í‚Ì‰e‹¿‚ğó‚¯‚é
-    m_vJumpVelocity.y -= m_Gravity * delta_time; //Y²‘¬“x‚©‚çd—Í‚ğˆø‚­ (Y²ã‚ª³‚Ìê‡)
+	if (!m_bIsJumping)
 
-    //Œ»İ‚ÌYÀ•W‚ğ‘¬“x‚ÅXV
-    m_vCurrentAttackPos.y += m_vJumpVelocity.y * delta_time;
+	{
 
-    //’n–Ê (Y=0.0f) ‚É“’B‚µ‚½‚©‚Ç‚¤‚©‚Ì”»’è
-    //ƒvƒŒƒCƒ„[‚Ì HandleGroundCollision ‚É—‚½’…’nˆ—
-    if (m_vCurrentAttackPos.y <= 0.0f)
-    {
-        m_vCurrentAttackPos.y = 0.0f; //’n–Ê‚É‚ß‚è‚Ü‚È‚¢‚æ‚¤‚É Y=0.0f ‚ÉƒNƒ‰ƒ“ƒv
+		return;
 
-        //Y‘¬“x‚ª‰ºŒü‚«i•‰j‚Ü‚½‚Íƒ[ƒ‚Å‚ ‚ê‚ÎA‘¬“x‚ğƒŠƒZƒbƒg‚µ‚Ä’…’n”»’è
-        //Œµ–§‚É‚ÍƒvƒŒƒCƒ„[‚Ì‚æ‚¤‚ÉÕ“Ë”»’è‚Í‚µ‚È‚¢‚ªAY‘¬“x‚ª•‰‚É‚È‚Á‚½‚ç’…’n‚Æ‚İ‚È‚·
-        if (m_vJumpVelocity.y <= 0.0f)
-        {
-            m_vJumpVelocity.y = 0.0f; //Y•ûŒü‚Ì‘¬“x‚ğƒ[ƒ‚É‚·‚é
-
-            //ƒWƒƒƒ“ƒvI—¹
-            m_bIsJumping = false;
-            //ƒWƒƒƒ“ƒvI—¹Œã‚Ìˆ—iƒGƒtƒFƒNƒg‚È‚Çj‚ğ‚±‚±‚É’Ç‰Á
-        }
-    }
+	}
 
 
-    //CStaticMeshObject‚Ì“à•”ˆÊ’u‚àXV
-    //ƒWƒƒƒ“ƒvŠJn‚ÌX, ZÀ•W‚ÍˆÛ
-    //D3DXVECTOR3 newBossPos = m_vInitialBossPos;
-    //newBossPos.y = m_vCurrentAttackPos.y; 
-    //YÀ•W‚Ì‚İ•¨—ŒvZ‚³‚ê‚½’l‚ğg‚¤
-    SetPosition(m_vCurrentAttackPos); //m_vCurrentAttackPos ‚ÍŠù‚ÉX, Z‚ª‰ŠúˆÊ’u
 
-    CStaticMeshObject::Update(); //Šî’êƒNƒ‰ƒX‚ÌUpdate‚ğŒÄ‚Ño‚µ (ƒ[ƒ‹ƒhs—ñ‚ÌXV‚È‚Ç)
+	//ãƒ‡ãƒ«ã‚¿ã‚¿ã‚¤ãƒ ã®å–å¾— (å®Ÿéš›ã®ã‚²ãƒ¼ãƒ ãƒ«ãƒ¼ãƒ—ã‹ã‚‰æ­£ç¢ºãªå€¤ã‚’å–å¾—ã—ã¦ãã ã•ã„)
+
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨åŒã˜è¨ˆç®—ãƒ­ã‚¸ãƒƒã‚¯ã«ã™ã‚‹ãŸã‚ã€delta_time ã‚’ä½¿ç”¨
+
+	float delta_time = 1.0f; //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®Updateã¨åŒã˜ãã€ã“ã“ã§å›ºå®šå€¤ã‚’ä½¿ã†ã‹ã€å®Ÿéš›ã®ãƒ‡ãƒ«ã‚¿ã‚¿ã‚¤ãƒ ã‚’æ¸¡ã™ã‹æ¤œè¨
+
+	//é€šå¸¸ã¯ deltaTime = 1.0f / 60.0f; ã®ã‚ˆã†ã«å®Ÿéš›ã®çµŒéæ™‚é–“ã‚’ä½¿ã†ã¹ãã§ã™
+
+	//ä»Šå›ã¯ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«åˆã‚ã›ã¦ 1.0f ã¨ã—ã¾ã™
+
+
+
+	//é‡åŠ›ã®å½±éŸ¿ã‚’å—ã‘ã‚‹
+
+	m_vJumpVelocity.y -= m_Gravity * delta_time; //Yè»¸é€Ÿåº¦ã‹ã‚‰é‡åŠ›ã‚’å¼•ã (Yè»¸ä¸ŠãŒæ­£ã®å ´åˆ)
+
+
+
+	//ç¾åœ¨ã®Yåº§æ¨™ã‚’é€Ÿåº¦ã§æ›´æ–°
+
+	m_vCurrentAttackPos.y += m_vJumpVelocity.y * delta_time;
+
+
+
+	//åœ°é¢ (Y=0.0f) ã«åˆ°é”ã—ãŸã‹ã©ã†ã‹ã®åˆ¤å®š
+
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã® HandleGroundCollision ã«ä¼¼ãŸç€åœ°å‡¦ç†
+
+	if (m_vCurrentAttackPos.y <= 0.0f)
+
+	{
+
+		m_vCurrentAttackPos.y = 0.0f; //åœ°é¢ã«ã‚ã‚Šè¾¼ã¾ãªã„ã‚ˆã†ã« Y=0.0f ã«ã‚¯ãƒ©ãƒ³ãƒ—
+
+
+
+		//Yé€Ÿåº¦ãŒä¸‹å‘ãï¼ˆè² ï¼‰ã¾ãŸã¯ã‚¼ãƒ­ã§ã‚ã‚Œã°ã€é€Ÿåº¦ã‚’ãƒªã‚»ãƒƒãƒˆã—ã¦ç€åœ°åˆ¤å®š
+
+		//å³å¯†ã«ã¯ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚ˆã†ã«è¡çªåˆ¤å®šã¯ã—ãªã„ãŒã€Yé€Ÿåº¦ãŒè² ã«ãªã£ãŸã‚‰ç€åœ°ã¨ã¿ãªã™
+
+		if (m_vJumpVelocity.y <= 0.0f)
+
+		{
+
+			m_vJumpVelocity.y = 0.0f; //Yæ–¹å‘ã®é€Ÿåº¦ã‚’ã‚¼ãƒ­ã«ã™ã‚‹
+
+
+
+			//ã‚¸ãƒ£ãƒ³ãƒ—çµ‚äº†
+
+			m_bIsJumping = false;
+
+			//ã‚¸ãƒ£ãƒ³ãƒ—çµ‚äº†å¾Œã®å‡¦ç†ï¼ˆã‚¨ãƒ•ã‚§ã‚¯ãƒˆãªã©ï¼‰ã‚’ã“ã“ã«è¿½åŠ 
+
+		}
+
+	}
+
+
+
+
+
+	//CStaticMeshObjectã®å†…éƒ¨ä½ç½®ã‚‚æ›´æ–°
+
+	//ã‚¸ãƒ£ãƒ³ãƒ—é–‹å§‹æ™‚ã®X, Zåº§æ¨™ã¯ç¶­æŒ
+
+	//D3DXVECTOR3 newBossPos = m_vInitialBossPos;
+
+	//newBossPos.y = m_vCurrentAttackPos.y;Â 
+
+	//Yåº§æ¨™ã®ã¿ç‰©ç†è¨ˆç®—ã•ã‚ŒãŸå€¤ã‚’ä½¿ã†
+
+	SetPosition(m_vCurrentAttackPos); //m_vCurrentAttackPos ã¯æ—¢ã«X, ZãŒåˆæœŸä½ç½®
+
+
+
+	CStaticMeshObject::Update(); //åŸºåº•ã‚¯ãƒ©ã‚¹ã®Updateã‚’å‘¼ã³å‡ºã— (ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã®æ›´æ–°ãªã©)
+
 }
 
+
+
 void CBossAttackJump::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera)
+
 {
-    //ƒWƒƒƒ“ƒv’†‚Å‚ ‚ê‚ÎAUŒ‚ƒIƒuƒWƒFƒNƒg©g (‚à‚µƒƒbƒVƒ…‚ª‚ ‚ê‚Î) ‚ğ•`‰æ
-    if (m_bIsJumping)
-    {
-        CStaticMeshObject::Draw(View, Proj, Light, Camera); //Šî’êƒNƒ‰ƒX‚Ì•`‰æ‚ğŒÄ‚Ño‚µ
-    }
+
+	//ã‚¸ãƒ£ãƒ³ãƒ—ä¸­ã§ã‚ã‚Œã°ã€æ”»æ’ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆè‡ªèº« (ã‚‚ã—ãƒ¡ãƒƒã‚·ãƒ¥ãŒã‚ã‚Œã°) ã‚’æç”»
+
+	if (m_bIsJumping)
+
+	{
+
+		CStaticMeshObject::Draw(View, Proj, Light, Camera); //åŸºåº•ã‚¯ãƒ©ã‚¹ã®æç”»ã‚’å‘¼ã³å‡ºã—
+
+	}
+
 }
