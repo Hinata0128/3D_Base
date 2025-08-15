@@ -39,7 +39,6 @@ public:
 private:
 
 	bool m_bIsJumping;//ジャンプ中かどうかを管理するフラグ
-
 	float m_fCurrentJumpTime;//現在のジャンプ経過時間 (秒)
 
 	float m_fJumpDuration;//ジャンプの持続時間 (秒) - このモデルでは直接使わないが、目安として残す

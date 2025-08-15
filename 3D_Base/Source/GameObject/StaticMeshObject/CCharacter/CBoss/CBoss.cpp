@@ -13,7 +13,7 @@ CBoss::CBoss()
     , deleta_time(0.f)
     , m_fSlashCoolTime(SLASH_COOLTIME_DURATION)
     , m_pPlayer(nullptr)
-    , m_eCurrentAttackSequenceState(AttackSequenceState::Jump) // 初期攻撃を斬る攻撃に設定
+    , m_eCurrentAttackSequenceState(AttackSequenceState::Jump) // 初期攻撃をジャンプ攻撃に設定
 {
     AttachMesh(*CStaticMeshManager::GetInstance()->GetMeshInstance(CStaticMeshManager::CMeshList::Enemy));
     m_bossAttackManager = std::make_unique<CBossAttackManager>();
@@ -32,36 +32,45 @@ void CBoss::Update()
 
     if (m_pPlayer && m_bossAttackManager)
     {
-        // プレイヤーとの距離計算は、攻撃順序のロジックには使用しない
-        // D3DXVECTOR3 bossPos = GetPosition();
-        // D3DXVECTOR3 playerPos = m_pPlayer->GetPosition();
-        // D3DXVECTOR3 diffVec = playerPos - bossPos;
-        // float distance = D3DXVec3Length(&diffVec);
-
         if (m_fSlashCoolTime >= SLASH_COOLTIME_DURATION && !m_bossAttackManager->HasActiveAttack())
         {
+            // プレイヤーの位置を取得
+            D3DXVECTOR3 playerPos = m_pPlayer->GetPosition();
+
             switch (m_eCurrentAttackSequenceState)
             {
             case AttackSequenceState::Jump:
-                m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Jump, GetPosition());
+                // CreateBossAttackの引数を修正
+                m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Jump, GetPosition(), playerPos);
                 m_fSlashCoolTime = 0.f;
-                m_eCurrentAttackSequenceState = AttackSequenceState::Jump; // 次の攻撃を斬る攻撃に設定（最初に戻る）
+                m_eCurrentAttackSequenceState = AttackSequenceState::Slash;
                 OutputDebugStringA("Boss: Initiating Jump Attack!\n");
                 break;
+
             case AttackSequenceState::Slash:
-                m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Slash, GetPosition());
+                // CreateBossAttackの引数を修正
+                m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Slash, GetPosition(), playerPos);
                 m_fSlashCoolTime = 0.f;
-                m_eCurrentAttackSequenceState = AttackSequenceState::Charge; // 次の攻撃をチャージに設定
+                m_eCurrentAttackSequenceState = AttackSequenceState::Charge;
                 OutputDebugStringA("Boss: Initiating Slash Attack!\n");
                 break;
 
             case AttackSequenceState::Charge:
-                m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Charge, GetPosition());
+                // CreateBossAttackの引数を修正
+                m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Charge, GetPosition(), playerPos);
                 m_fSlashCoolTime = 0.f;
-                m_eCurrentAttackSequenceState = AttackSequenceState::Jump; // 次の攻撃をジャンプに設定
+                m_eCurrentAttackSequenceState = AttackSequenceState::Special; // 次の攻撃をスペシャルに設定
                 OutputDebugStringA("Boss: Initiating Charge Attack!\n");
                 break;
 
+                // ★追加: スペシャル攻撃のロジック
+            case AttackSequenceState::Special:
+                // プレイヤーの位置を取得して、CreateBossAttackに渡す
+                m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Special, GetPosition(), playerPos);
+                m_fSlashCoolTime = 0.f;
+                m_eCurrentAttackSequenceState = AttackSequenceState::Jump; // 攻撃シーケンスを最初に戻す
+                OutputDebugStringA("Boss: Initiating Special Attack!\n");
+                break;
 
             default:
                 break;
@@ -76,6 +85,7 @@ void CBoss::Update()
         CBossAttack* activeAttack = m_bossAttackManager->GetActiveAttack();
         if (activeAttack && activeAttack->IsAttackActive())
         {
+            // 攻撃の位置にボスの位置を同期
             SetPosition(activeAttack->GetCalculatedAttackPosition());
         }
     }

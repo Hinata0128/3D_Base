@@ -47,12 +47,12 @@ protected:
     std::unique_ptr<CBossAttackManager> m_bossAttackManager;
     CPlayer* m_pPlayer;
 
-    // --- V‹K’Ç‰Á ---
+    // šC³: Special‚ğ—ñ‹“Œ^‚É’Ç‰Á
     enum class AttackSequenceState {
         Slash,
         Charge,
-        Jump
+        Jump,
+        Special // ƒXƒyƒVƒƒƒ‹UŒ‚‚ğ’Ç‰Á
     };
     AttackSequenceState m_eCurrentAttackSequenceState;
-    // --- ‚±‚±‚Ü‚ÅV‹K’Ç‰Á ---
 };
