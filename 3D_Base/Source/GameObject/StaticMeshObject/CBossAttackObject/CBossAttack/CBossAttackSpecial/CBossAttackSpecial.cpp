@@ -1,8 +1,9 @@
 #include "CBossAttackSpecial.h"
 
 // 攻撃全体にかかる時間。この値を調整して速度を変えます。
-const float ATTACK_DURATION = 2.0f;
-const float JUMP_HEIGHT = 8.0f;
+const float ATTACK_DURATION = 0.5f;
+const float JUMP_HEIGHT = 5.0f;
+
 
 CBossAttackSpecial::CBossAttackSpecial()
 	: m_eState(SpecialState::Jumping)

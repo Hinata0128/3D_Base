@@ -19,7 +19,8 @@ public:
 private:
 	enum class SpecialState
 	{
-		Jumping,   // ジャンプと突進を統合
+		Preparing,
+		Jumping,
 		Finished
 	};
 	SpecialState m_eState;
@@ -28,9 +29,11 @@ private:
 	D3DXVECTOR3 m_vTargetPosition;
 	D3DXVECTOR3 m_vCurrentPosition;
 
+	float m_fPreparationTimer;
+
 	float m_fProgress;
-	const float ATTACK_DURATION = 2.0f; // 攻撃全体にかかる時間
-	const float JUMP_HEIGHT = 8.0f;
+	const float JUMP_HEIGHT = 5.0f; // これだけ残す
+
 
 	bool m_bIsFinished;
 };
