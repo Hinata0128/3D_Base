@@ -36,7 +36,7 @@ void CBossAttackSpecial::Update()
 		return;
 	}
 
-	float deltaTime = 1.0f / 60.0f;
+	float deltaTime = 1.0f / 180.0f;
 
 	switch (m_eState)
 	{

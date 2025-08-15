@@ -51,7 +51,7 @@ void CBoss::Update()
                 // CreateBossAttackの引数を修正
                 m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Slash, GetPosition(), playerPos);
                 m_fSlashCoolTime = 0.f;
-                m_eCurrentAttackSequenceState = AttackSequenceState::Charge;
+                m_eCurrentAttackSequenceState = AttackSequenceState::Special;
                 OutputDebugStringA("Boss: Initiating Slash Attack!\n");
                 break;
 
