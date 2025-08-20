@@ -1,5 +1,6 @@
 #include "CBossAttackManager.h"
 #include <windows.h> // OutputDebugStringA のため
+#include "../../CCharacter/Player/CPlayer.h"
 
 CBossAttackManager::CBossAttackManager()
 {
@@ -35,7 +36,7 @@ void CBossAttackManager::Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, 
 }
 
 // ボスアタックの生成と設定を行う
-void CBossAttackManager::CreateBossAttack(BossAttackList attackType, const D3DXVECTOR3& bossCurrentPos, const D3DXVECTOR3& playerTargetPos)
+void CBossAttackManager::CreateBossAttack(BossAttackList attackType, const D3DXVECTOR3& bossCurrentPos, const D3DXVECTOR3& playerTargetPos, CPlayer* player)
 {
 	// 新しい攻撃を生成する前に、現在の攻撃があれば破棄する
 	m_pAttack.reset(); // 現在のunique_ptrが保持しているオブジェクトを解放
@@ -78,6 +79,7 @@ void CBossAttackManager::CreateBossAttack(BossAttackList attackType, const D3DXV
 			OutputDebugStringA("Error: Failed to cast to CBossAttackSlashCharge in CreateBossAttack.\n");
 		}
 		break;
+
 	case BossAttackList::Special:
 		m_pAttack = std::make_unique<CBossAttackSpecial>();
 		if (CBossAttackSpecial* special = dynamic_cast<CBossAttackSpecial*>(m_pAttack.get()))
@@ -87,6 +89,19 @@ void CBossAttackManager::CreateBossAttack(BossAttackList attackType, const D3DXV
 		else
 		{
 			OutputDebugStringA("Error: Failed to cast to CBossAttackSpecial in CreateBossAttack.\n");
+		}
+		break;
+
+	case BossAttackList::Shout:
+		m_pAttack = std::make_unique<CBossAttackShout>();
+		if (CBossAttackShout* shout = dynamic_cast<CBossAttackShout*>(m_pAttack.get()))
+		{
+			// 修正: StartShoutAttackの引数にCPlayer*を追加
+			shout->StartShoutAttack(bossCurrentPos, player);
+		}
+		else
+		{
+			OutputDebugStringA("Error: Failed to cast to CBossAttackShout in CreateBossAttack.\n");
 		}
 		break;
 

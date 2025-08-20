@@ -166,6 +166,7 @@
     <ClCompile Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttackObject.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttack.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackJump\CBossAttackJump.cpp" />
+    <ClCompile Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackShout\CBossAttackShout.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackSlashCharge\CBossAttackSlashCharge.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackSlash\CBossAttackSlash.cpp" />
     <ClCompile Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackSpecial\CBossAttackSpecial.cpp" />
@@ -207,6 +208,7 @@
     <ClInclude Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttackObject.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttack.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackJump\CBossAttackJump.h" />
+    <ClInclude Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackShout\CBossAttackShout.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackSlashCharge\CBossAttackSlashCharge.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackSlash\CBossAttackSlash.h" />
     <ClInclude Include="Source\GameObject\StaticMeshObject\CBossAttackObject\CBossAttack\CBossAttackSpecial\CBossAttackSpecial.h" />
