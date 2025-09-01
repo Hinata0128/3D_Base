@@ -25,9 +25,6 @@ void CBossAttackShout::StartShoutAttack(const D3DXVECTOR3& bossPos, CPlayer* pla
 	m_fShoutTimer = 0.f;
 	m_bIsFinished = false;
 
-	// ‚±‚±‚Å‹©‚Ñº‚ÌƒTƒEƒ“ƒh‚ðÄ¶
-	// CSoundManager::GetInstance()->Play("shout.wav", false);
-	OutputDebugStringA("Boss: Shouting initiated!\n");
 }
 
 void CBossAttackShout::Update()

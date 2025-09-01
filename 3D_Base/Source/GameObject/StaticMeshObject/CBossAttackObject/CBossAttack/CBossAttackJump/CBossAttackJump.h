@@ -57,8 +57,8 @@ private:
 
 	D3DXVECTOR3 m_vJumpVelocity;//ジャンプ中の現在のY方向速度
 
-	float m_JumpPower;//ジャンプの初速度（プレイヤーのm_JumpPowerに相当）
+	float m_JumpPower;//ジャンプの初速度
 
-	float m_Gravity;//重力加速度（プレイヤーのm_Gravityに相当）
+	float m_Gravity;//重力加速度
 
 };

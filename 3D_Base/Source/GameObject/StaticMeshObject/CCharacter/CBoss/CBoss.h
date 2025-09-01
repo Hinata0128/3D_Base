@@ -18,8 +18,12 @@ public:
 
 	void Update() override;
 	void Draw(D3DXMATRIX& View, D3DXMATRIX& Proj, LIGHT& Light, CAMERA& Camera) override;
+	
 	void Init();
+
+	//ƒ{ƒX‚ÌˆÊ’u
 	void InitializeBossPosition(const D3DXVECTOR3& initialPos);
+	
 	void RadioControl();
 	void HandleGroundCollision(CStaticMeshObject* pGroundObject);
 
@@ -47,13 +51,13 @@ protected:
 	std::unique_ptr<CBossAttackManager> m_bossAttackManager;
 	CPlayer* m_pPlayer;
 
-	// šC³: Special‚ğ—ñ‹“Œ^‚É’Ç‰Á
+	//Special‚ğ—ñ‹“Œ^‚É’Ç‰Á
 	enum class AttackSequenceState {
 		Jump,
 		Slash,
 		Charge,
 		Special,
-		Shout, // š’Ç‰Á
+		Shout, 
 	};
 	AttackSequenceState m_eCurrentAttackSequenceState;
 };

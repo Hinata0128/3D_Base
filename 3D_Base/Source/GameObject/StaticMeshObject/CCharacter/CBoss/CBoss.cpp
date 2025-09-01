@@ -42,36 +42,31 @@ void CBoss::Update()
 			case AttackSequenceState::Jump:
 				m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Jump, GetPosition(), playerPos, m_pPlayer);
 				m_fSlashCoolTime = 0.f;
-				m_eCurrentAttackSequenceState = AttackSequenceState::Slash;
-				OutputDebugStringA("Boss: Initiating Jump Attack!\n");
+				m_eCurrentAttackSequenceState = AttackSequenceState::Shout;
 				break;
 
 			case AttackSequenceState::Slash:
 				m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Slash, GetPosition(), playerPos, m_pPlayer);
 				m_fSlashCoolTime = 0.f;
 				m_eCurrentAttackSequenceState = AttackSequenceState::Charge;
-				OutputDebugStringA("Boss: Initiating Slash Attack!\n");
 				break;
 
 			case AttackSequenceState::Charge:
 				m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Charge, GetPosition(), playerPos, m_pPlayer);
 				m_fSlashCoolTime = 0.f;
 				m_eCurrentAttackSequenceState = AttackSequenceState::Special; // 次の攻撃をスペシャルに設定
-				OutputDebugStringA("Boss: Initiating Charge Attack!\n");
 				break;
 
 			case AttackSequenceState::Special:
 				m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Special, GetPosition(), playerPos, m_pPlayer);
 				m_fSlashCoolTime = 0.f;
 				m_eCurrentAttackSequenceState = AttackSequenceState::Shout; // 次の攻撃を叫び声に設定
-				OutputDebugStringA("Boss: Initiating Special Attack!\n");
 				break;
 
 			case AttackSequenceState::Shout:
 				m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Shout, GetPosition(), playerPos, m_pPlayer);
 				m_fSlashCoolTime = 0.f;
 				m_eCurrentAttackSequenceState = AttackSequenceState::Jump; // 攻撃シーケンスを最初に戻す
-				OutputDebugStringA("Boss: Initiating Shout Attack!\n");
 				break;
 
 			default:
