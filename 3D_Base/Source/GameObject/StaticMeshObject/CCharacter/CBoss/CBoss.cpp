@@ -42,7 +42,7 @@ void CBoss::Update()
 			case AttackSequenceState::Jump:
 				m_bossAttackManager->CreateBossAttack(CBossAttackManager::BossAttackList::Jump, GetPosition(), playerPos, m_pPlayer);
 				m_fSlashCoolTime = 0.f;
-				m_eCurrentAttackSequenceState = AttackSequenceState::Slash;
+				m_eCurrentAttackSequenceState = AttackSequenceState::Charge;
 				break;
 
 			case AttackSequenceState::Slash:
