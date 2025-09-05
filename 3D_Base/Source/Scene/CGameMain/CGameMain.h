@@ -66,9 +66,6 @@ private:
 	//スタティックメッシュオブジェクトクラス.
 	CStaticMeshObject* m_pStcMeshObj; // このメンバは現在使用されていません
 
-	std::vector<CStaticMeshObject*> m_Walls; // ★変更: m_Walls を std::vector で宣言
-
-
 	//キャラクタークラス
 	CCharacter* m_pPlayer; 
 

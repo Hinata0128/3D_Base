@@ -58,13 +58,6 @@ CGameMain::~CGameMain()
 	//スタティックメッシュオブジェクトの破棄 (未使用だが一応)
 	SAFE_DELETE(m_pStcMeshObj);
 
-	// ★変更: 複数の壁オブジェクトを解放
-	for (auto it = m_Walls.rbegin(); it != m_Walls.rend(); ++it)
-	{
-		SAFE_DELETE(*it);
-	}
-	m_Walls.clear(); // vector の要素をクリア
-
 	//スタティックメッシュの破棄
 	SAFE_DELETE(m_pStaticMeshFighter); // ★追加: Fighterメッシュの解放
 	SAFE_DELETE(m_pStaticMeshGround);
@@ -144,43 +137,10 @@ void CGameMain::Create()
 	m_pStaticMeshWall->Init(*m_pDx9, *m_pDx11,
 		_T("Data\\Collision\\Box.x")); // Wallメッシュの読み込み
 
-	// ★変更: 複数の壁オブジェクトを生成し、vectorに追加
-	const int NUM_WALLS = 4; // 四方に壁を置くので4つ
-	m_Walls.reserve(NUM_WALLS); // 事前にメモリ確保 (任意)
-	for (int i = 0; i < NUM_WALLS; ++i)
-	{
-		m_Walls.push_back(new CStaticMeshObject());
-	}
-
 	const float STAGE_HALF_SIZE_X = 20.0f;
 	const float STAGE_HALF_SIZE_Z = 20.0f;
 	const float WALL_HEIGHT = 2.0f;
 	const float WALL_THICKNESS = 0.5f;
-
-	// 各壁の設定
-	// 1. 奥の壁 (+Z方向)
-	m_Walls[0]->AttachMesh(*m_pStaticMeshWall);
-	m_Walls[0]->SetScale(STAGE_HALF_SIZE_X * 2.0f + WALL_THICKNESS * 2.0f, WALL_HEIGHT, WALL_THICKNESS);
-	m_Walls[0]->SetPosition(0.0f, WALL_HEIGHT / 2.0f, STAGE_HALF_SIZE_Z + WALL_THICKNESS / 2.0f);
-	m_Walls[0]->CreateBBoxForMesh(*m_pStaticMeshWall); // BoundingBoxも作成
-
-	// 2. 手前の壁 (-Z方向)
-	m_Walls[1]->AttachMesh(*m_pStaticMeshWall);
-	m_Walls[1]->SetScale(STAGE_HALF_SIZE_X * 2.0f + WALL_THICKNESS * 2.0f, WALL_HEIGHT, WALL_THICKNESS);
-	m_Walls[1]->SetPosition(0.0f, WALL_HEIGHT / 2.0f, -STAGE_HALF_SIZE_Z - WALL_THICKNESS / 2.0f);
-	m_Walls[1]->CreateBBoxForMesh(*m_pStaticMeshWall); // BoundingBoxも作成
-
-	// 3. 左の壁 (-X方向)
-	m_Walls[2]->AttachMesh(*m_pStaticMeshWall);
-	m_Walls[2]->SetScale(WALL_THICKNESS, WALL_HEIGHT, STAGE_HALF_SIZE_Z * 2.0f);
-	m_Walls[2]->SetPosition(-STAGE_HALF_SIZE_X - WALL_THICKNESS / 2.0f, WALL_HEIGHT / 2.0f, 0.0f);
-	m_Walls[2]->CreateBBoxForMesh(*m_pStaticMeshWall); // BoundingBoxも作成
-
-	// 4. 右の壁 (+X方向)
-	m_Walls[3]->AttachMesh(*m_pStaticMeshWall);
-	m_Walls[3]->SetScale(WALL_THICKNESS, WALL_HEIGHT, STAGE_HALF_SIZE_Z * 2.0f);
-	m_Walls[3]->SetPosition(STAGE_HALF_SIZE_X + WALL_THICKNESS / 2.0f, WALL_HEIGHT / 2.0f, 0.0f);
-	m_Walls[3]->CreateBBoxForMesh(*m_pStaticMeshWall); // BoundingBoxも作成
 
 	//スタティックメッシュを設定.
 	m_pStcMeshObj->AttachMesh(*m_pStaticMeshFighter); // 未使用だが一応設定
@@ -264,65 +224,6 @@ void CGameMain::Update()
 		}
 	}
 
-	// ★変更: 複数の壁オブジェクトの更新とプレイヤーとのAABB衝突判定
-	for (auto& wall : m_Walls) {
-		wall->Update(); // 各壁オブジェクトを更新
-		wall->UpdateBSpherePos(); // ★追加: 壁のBBoxも更新 (衝突判定前に必要)
-	}
-
-	if (playerBBox) // プレイヤーのBBoxが有効な場合のみ壁との判定を行う
-	{
-		for (auto& wall : m_Walls)
-		{
-			BoundingBox* wallBBox = wall->GetBBox();
-
-			if (wallBBox && playerBBox->IsHit(*wallBBox))
-			{
-				OutputDebugStringA("Player hit A Wall!\n");
-
-				D3DXVECTOR3 playerPos = m_pPlayer->GetPosition();
-
-				const D3DXVECTOR3& playerMin = playerBBox->GetMinPosition();
-				const D3DXVECTOR3& playerMax = playerBBox->GetMaxPosition();
-				const D3DXVECTOR3& wallMin = wallBBox->GetMinPosition();
-				const D3DXVECTOR3& wallMax = wallBBox->GetMaxPosition();
-
-				float overlapX = 0.0f;
-				float overlapY = 0.0f;
-				float overlapZ = 0.0f;
-
-				if (playerMin.x < wallMax.x && playerMax.x > wallMin.x) {
-					overlapX = min(playerMax.x - wallMin.x, wallMax.x - playerMin.x);
-				}
-				if (playerMin.y < wallMax.y && playerMax.y > wallMin.y) {
-					overlapY = min(playerMax.y - wallMin.y, wallMax.y - playerMin.y);
-				}
-				if (playerMin.z < wallMax.z && playerMax.z > wallMin.z) {
-					overlapZ = min(playerMax.z - wallMin.z, wallMax.z - playerMin.z);
-				}
-
-				if (overlapX > 0 && (overlapX <= overlapZ || overlapZ == 0)) {
-					if (playerPos.x < wallBBox->GetCenter().x) {
-						playerPos.x = wallMin.x - (playerBBox->GetSize().x / 2.0f);
-					}
-					else {
-						playerPos.x = wallMax.x + (playerBBox->GetSize().x / 2.0f);
-					}
-				}
-				else if (overlapZ > 0 && (overlapZ < overlapX || overlapX == 0)) {
-					if (playerPos.z < wallBBox->GetCenter().z) {
-						playerPos.z = wallMin.z - (playerBBox->GetSize().z / 2.0f);
-					}
-					else {
-						playerPos.z = wallMax.z + (playerBBox->GetSize().z / 2.0f);
-					}
-				}
-				m_pPlayer->SetPosition(playerPos.x, playerPos.y, playerPos.z);
-				break; // 最初の壁との衝突応答でループを抜ける
-			}
-		}
-	}
-
 	// --- ここからボスの当たり判定コードの修正 ---
 	CBoss* currentBoss = dynamic_cast<CBoss*>(m_pBoss);
 
@@ -351,62 +252,6 @@ void CGameMain::Update()
 		}
 	}
 
-	// ボスと壁の当たり判定 (変更なし、このままでOK)
-	if (bossBBox)
-	{
-		for (auto& wall : m_Walls)
-		{
-			BoundingBox* wallBBox = wall->GetBBox();
-
-			if (wallBBox && bossBBox->IsHit(*wallBBox))
-			{
-				OutputDebugStringA("Boss hit A Wall!\n"); // デバッグ用
-
-				D3DXVECTOR3 bossPos = currentBoss->GetPosition();
-
-				const D3DXVECTOR3& bossMin = bossBBox->GetMinPosition();
-				const D3DXVECTOR3& bossMax = bossBBox->GetMaxPosition();
-				const D3DXVECTOR3& wallMin = wallBBox->GetMinPosition();
-				const D3DXVECTOR3& wallMax = wallBBox->GetMaxPosition();
-
-				float overlapX = 0.0f;
-				float overlapY = 0.0f;
-				float overlapZ = 0.0f;
-
-				// 各軸でのオーバーラップ量を計算
-				if (bossMin.x < wallMax.x && bossMax.x > wallMin.x) {
-					overlapX = min(bossMax.x - wallMin.x, wallMax.x - bossMin.x);
-				}
-				if (bossMin.y < wallMax.y && bossMax.y > wallMin.y) {
-					overlapY = min(bossMax.y - wallMin.y, wallMax.y - bossMin.y);
-				}
-				if (bossMin.z < wallMax.z && bossMax.z > wallMin.z) {
-					overlapZ = min(bossMax.z - wallMin.z, wallMax.z - bossMin.z);
-				}
-
-				// 最も小さいオーバーラップ軸に沿って位置を調整
-				if (overlapX > 0 && (overlapX <= overlapZ || overlapZ == 0)) {
-					if (bossPos.x < wallBBox->GetCenter().x) {
-						bossPos.x = wallMin.x - (bossBBox->GetSize().x / 2.0f);
-					}
-					else {
-						bossPos.x = wallMax.x + (bossBBox->GetSize().x / 2.0f);
-					}
-				}
-				else if (overlapZ > 0 && (overlapZ < overlapX || overlapX == 0)) {
-					if (bossPos.z < wallBBox->GetCenter().z) {
-						bossPos.z = wallMin.z - (bossBBox->GetSize().z / 2.0f);
-					}
-					else {
-						bossPos.z = wallMax.z + (bossBBox->GetSize().z / 2.0f);
-					}
-				}
-				currentBoss->SetPosition(bossPos.x, bossPos.y, bossPos.z);
-				break; // 最初の壁との衝突応答でループを抜ける
-			}
-		}
-	}
-
 	// --- ボスの当たり判定コード修正終わり ---
 
 	//三人称カメラ
@@ -426,11 +271,6 @@ void CGameMain::Draw()
 	m_pPlayer->Draw(m_mView, m_mProj, m_Light, m_Camera);
 	m_pBoss->Draw(m_mView, m_mProj, m_Light, m_Camera);
 
-	// ★変更: 複数の壁を描画
-	for (auto& wall : m_Walls)
-	{
-		wall->Draw(m_mView, m_mProj, m_Light, m_Camera);
-	}
 
 	// ★変更: BoundingBox/Sphere位置の更新はUpdate()に移動したのでここからは削除
 
